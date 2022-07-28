@@ -1,31 +1,27 @@
+import json
 from datetime import datetime
 import os
 
 
-def decor_fun(func):
-    CACHE_TIME = {}
+def pathway(file_name):
+    def decor_fun(func):
+        CACHE_TIME = {}
 
-    def time_date_func(*args, **kwargs):
-        tm = str(datetime.now().time())
-        dt = str(datetime.now().date())
-        CACHE_TIME["date"] = dt
-        CACHE_TIME["time"] = tm
-        CACHE_TIME["name function"] = func.__name__
-        CACHE_TIME["log"] = os.getcwd()
-        CACHE_TIME["start"] = func(*args, **kwargs)
-        CACHE_TIME["stop"] = func(*args, **kwargs)
-        with open('log_list_func.json', 'w') as f:
-            f.write(str(CACHE_TIME))
+        def time_date_func(*args, **kwargs):
+            tm = str(datetime.now().time())
+            dt = str(datetime.now().date())
+            CACHE_TIME["date"] = dt
+            CACHE_TIME["time"] = tm
+            CACHE_TIME["name function"] = func.__name__
+            CACHE_TIME["log"] = os.getcwd()
+            CACHE_TIME["start"] = func(*args, **kwargs)
+            CACHE_TIME["stop"] = func(*args, **kwargs)
+            with open(file_name, 'w') as f:
+                json.dump(CACHE_TIME, f)
 
-    return time_date_func
+        return time_date_func
+    return decor_fun
 
-
-# @decor_fun
-# def sum_test_decor(a: int, b: int) -> int:
-#     return a * b
-#
-#
-# sum_test_decor(6, 7)
 class MeIterator:
 
     def __init__(self, list_):
@@ -46,7 +42,8 @@ class MeIterator:
             self.nest_cursor = 0
         raise StopIteration
 
-@decor_fun
+
+@pathway('log_list.json')
 def main():
     nested_list = [
         ['a', 'b', 'c'],
